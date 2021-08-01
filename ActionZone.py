@@ -46,7 +46,7 @@ class ActionZone(IStrategy):
 
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -100
+    stoploss = -0.10
 
     # Trailing stoploss
     trailing_stop = False
@@ -111,8 +111,19 @@ class ActionZone(IStrategy):
     }
     
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float, proposed_stake: float, min_stake: float, max_stake: float, **kwargs) -> float:
+        risk_pre_trade = 0.02
+        max_money_loss_pre_trade = self.wallets.get_starting_balance() * risk_pre_trade
+        stop_price = current_rate * ( 1 - -self.stoploss ) # loss 10% of price
+        volume_for_buy = max_money_loss_pre_trade / (current_rate - stop_price)
+        use_money = volume_for_buy * current_rate
+
+        # print("use_money", use_money)
+        # print("max_money_loss_pre_trade", max_money_loss_pre_trade)
+        # print("current_rate", current_rate)
+        
+        
         # return self.wallets.get_total_stake_amount() * 0.05
-        return self.wallets.get_total_stake_amount() * 0.05
+        return use_money
 
     def informative_pairs(self):
         """

@@ -28,7 +28,7 @@ class ActionZone(IStrategy):
 
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
-    stoploss = -0.10
+    stoploss = -1.00
     use_custom_stoploss = True
 
     # Trailing stoploss

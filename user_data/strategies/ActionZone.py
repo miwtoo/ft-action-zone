@@ -91,6 +91,9 @@ class ActionZone(IStrategy):
 
         stoploss_price = last_candle['lowest']
 
+        if current_profit != 0:
+            return -1 # return a value bigger than the initial stoploss to keep using the initial stoploss
+
         # Convert absolute price to percentage relative to current_rate
         if stoploss_price < current_rate:
             return (stoploss_price / current_rate) - 1

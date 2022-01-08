@@ -51,6 +51,12 @@ class ActionZone(IStrategy):
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 30
 
+    # Number of candles used for calculations in lowest price of period
+    min_price_period: int = 14
+
+    # max loss able for calculation position size
+    max_loss_per_trade = 10 # USD
+
     # Optional order type mapping.
     order_types = {
         'buy': 'limit',
@@ -79,10 +85,11 @@ class ActionZone(IStrategy):
     }
     
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float, proposed_stake: float, min_stake: float, max_stake: float, **kwargs) -> float:
-        risk_pre_trade = 0.02
-        max_money_loss_pre_trade = self.wallets.get_starting_balance() * risk_pre_trade
-        stop_price = current_rate * ( 1 - -self.stoploss ) # loss 10% of price
-        volume_for_buy = max_money_loss_pre_trade / (current_rate - stop_price)
+        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+        last_candle = dataframe.iloc[-1].squeeze()
+
+        stop_price = last_candle['lowest']
+        volume_for_buy = self.max_loss_per_trade / (current_rate - stop_price)
         use_money = volume_for_buy * current_rate
 
         return use_money
@@ -111,6 +118,10 @@ class ActionZone(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for the strategies
         """
+
+        # MIN - Lowest value over a specified period
+        lowest = ta.MIN(dataframe, timeperiod=self.min_price_period)
+        dataframe['lowest'] = lowest
 
         # EMA - Exponential Moving Average
         fastEMA = ta.EMA(dataframe, timeperiod=12)

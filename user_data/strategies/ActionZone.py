@@ -15,25 +15,7 @@ import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 import datetime
 
-
-# This class is a sample. Feel free to customize it.
 class ActionZone(IStrategy):
-    """
-    This is a sample strategy to inspire you.
-    More information in https://www.freqtrade.io/en/latest/strategy-customization/
-
-    You can:
-        :return: a Dataframe with all mandatory indicators for the strategies
-    - Rename the class name (Do not forget to update class_name)
-    - Add any methods you want to build your strategy
-    - Add any lib you need to build your strategy
-
-    You must keep:
-    - the lib in the section "Do not remove these libs"
-    - the methods: populate_indicators, populate_buy_trend, populate_sell_trend
-    You should keep:
-    - timeframe, minimal_roi, stoploss, trailing_*
-    """
     # Strategy interface version - allow new iterations of the strategy interface.
     # Check the documentation or the Sample strategy to get the latest version.
     INTERFACE_VERSION = 2
@@ -54,9 +36,6 @@ class ActionZone(IStrategy):
     # trailing_stop_positive = 0.01
     # trailing_stop_positive_offset = 0.0  # Disabled / not configured
 
-    # Hyperoptable parameters
-    # buy_rsi = IntParameter(low=1, high=50, default=30, space='buy', optimize=True, load=True)
-    # sell_rsi = IntParameter(low=50, high=100, default=70, space='sell', optimize=True, load=True)
 
     # Optimal timeframe for the strategy.
     timeframe = '1d'
@@ -96,18 +75,7 @@ class ActionZone(IStrategy):
             'slowMA': {
                 'color': 'blue',
             },
-            # 'tema': {},
-            # 'sar': {'color': 'white'},
         },
-        # 'subplots': {
-        #     "MACD": {
-        #         'macd': {'color': 'blue'},
-        #         'macdsignal': {'color': 'orange'},
-        #     },
-        #     "RSI": {
-        #         'rsi': {'color': 'red'},
-        #     }
-        # }
     }
     
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float, proposed_stake: float, min_stake: float, max_stake: float, **kwargs) -> float:
@@ -117,12 +85,6 @@ class ActionZone(IStrategy):
         volume_for_buy = max_money_loss_pre_trade / (current_rate - stop_price)
         use_money = volume_for_buy * current_rate
 
-        # print("use_money", use_money)
-        # print("max_money_loss_pre_trade", max_money_loss_pre_trade)
-        # print("current_rate", current_rate)
-        
-        
-        # return self.wallets.get_total_stake_amount() * 0.05
         return use_money
 
     def informative_pairs(self):
@@ -149,12 +111,6 @@ class ActionZone(IStrategy):
         :param metadata: Additional information, like the currently traded pair
         :return: a Dataframe with all mandatory indicators for the strategies
         """
-
-        # MACD
-        # macd = ta.MACD(dataframe)
-        # dataframe['macd'] = macd['macd']
-        # dataframe['macdsignal'] = macd['macdsignal']
-        # dataframe['macdhist'] = macd['macdhist']
 
         # EMA - Exponential Moving Average
         fastEMA = ta.EMA(dataframe, timeperiod=12)

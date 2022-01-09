@@ -94,7 +94,7 @@ class ActionZone(IStrategy):
         stoploss_price = last_candle['lowest']
 
         # set stoploss when is new order
-        if current_profit == 0 and (current_time - trade.open_date_utc).minutes >= 1:
+        if current_profit == 0 and current_time - timedelta(minutes=1) < trade.open_date_utc:
         # Convert absolute price to percentage relative to current_rate
             return (stoploss_price / current_rate) - 1
 

@@ -8,12 +8,14 @@ from pandas import DataFrame
 
 from freqtrade.strategy import IStrategy
 from freqtrade.strategy import CategoricalParameter, DecimalParameter, IntParameter
+from freqtrade.persistence import Trade
 
 # --------------------------------
 # Add your lib to import here
 import talib.abstract as ta
 import freqtrade.vendor.qtpylib.indicators as qtpylib
 import datetime
+from datetime import datetime, timedelta
 
 class ActionZone(IStrategy):
     # Strategy interface version - allow new iterations of the strategy interface.
@@ -93,7 +95,7 @@ class ActionZone(IStrategy):
         stoploss_price = last_candle['lowest']
 
         # set stoploss when is new order
-        if current_profit == 0:
+        if current_profit == 0 and (current_time - trade.open_date_utc).minute >= 1:
         # Convert absolute price to percentage relative to current_rate
             return (stoploss_price / current_rate) - 1
 

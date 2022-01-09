@@ -29,6 +29,7 @@ class ActionZone(IStrategy):
     # Optimal stoploss designed for the strategy.
     # This attribute will be overridden if the config file contains "stoploss".
     stoploss = -1.00
+    use_custom_stoploss = True
 
     # Trailing stoploss
     trailing_stop = False
@@ -84,6 +85,20 @@ class ActionZone(IStrategy):
         },
     }
     
+
+    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime, current_rate: float, current_profit: float, **kwargs) -> float:
+        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+        last_candle = dataframe.iloc[-1].squeeze()
+
+        stoploss_price = last_candle['lowest']
+
+        # set stoploss when is new order
+        if current_profit == 0:
+        # Convert absolute price to percentage relative to current_rate
+            return (stoploss_price / current_rate) - 1
+
+        return 1 # return a value bigger than the initial stoploss to keep using the initial stoploss
+
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float, proposed_stake: float, min_stake: float, max_stake: float, **kwargs) -> float:
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()

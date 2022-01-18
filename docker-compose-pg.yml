@@ -1,0 +1,46 @@
+---
+version: "3"
+services:
+  freqtrade:
+    depends_on:
+      - db
+    # platform: linux/x86_64
+    # image: freqtradeorg/freqtrade:stable
+    image: freqtrade
+    build:
+      context: .
+      dockerfile: "./Dockerfile.pg"
+    # image: freqtradeorg/freqtrade:develop
+    # Use plotting image
+    # image: freqtradeorg/freqtrade:develop_plot
+    # Build step - only needed when additional dependencies are needed
+    # build:
+    #   context: .
+    #   dockerfile: "./docker/Dockerfile.custom"
+    restart: unless-stopped
+    container_name: freqtrade
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    # Expose api on port 8080 (localhost only)
+    # Please read the https://www.freqtrade.io/en/latest/rest-api/ documentation
+    # before enabling this.
+    ports:
+      - "8080:8080"
+    # Default command used when running `docker compose up`
+    command: >
+      trade
+      --logfile /freqtrade/user_data/logs/freqtrade.log
+      --db-url postgresql+psycopg2://postgres:bj2mkrkmUx5YfAiRQ6xsyEDaw3YBn7@db:5432/freqtrade
+      --config /freqtrade/user_data/config.json
+      --strategy ActionZone
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_INITDB_ARGS: --auth-host=md5
+      POSTGRES_PASSWORD: bj2mkrkmUx5YfAiRQ6xsyEDaw3YBn7
+      POSTGRES_DB: freqtrade
+      POSTGRES_HOST_AUTH_METHOD: md5

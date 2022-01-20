@@ -54,7 +54,7 @@ class ActionZone(IStrategy):
     startup_candle_count: int = 30
 
     # Number of candles used for calculations in lowest price of period
-    min_price_period: int = 14
+    min_price_period: int = 32
 
     # max loss able for calculation position size
     max_loss_per_trade = 10 # USD

@@ -48,7 +48,6 @@ class ActionZone(IStrategy):
     # These values can be overridden in the "ask_strategy" section in the config.
     use_exit_signal = True
     exit_profit_only = False
-    ignore_roi_if_entry_signal = False
 
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 30

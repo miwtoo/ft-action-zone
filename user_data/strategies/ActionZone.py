@@ -58,6 +58,9 @@ class ActionZone(IStrategy):
     # max loss able for calculation position size
     max_loss_per_trade = 10 # USD
 
+    fast_ma_period = 12
+    slow_ma_period = 26
+
     # Optional order type mapping.
     order_types = {
         'entry': 'limit',
@@ -112,8 +115,8 @@ class ActionZone(IStrategy):
         dataframe['lowest'] = lowest
 
         # EMA - Exponential Moving Average
-        fastEMA = ta.EMA(dataframe, timeperiod=12)
-        slowEMA = ta.EMA(dataframe, timeperiod=26)
+        fastEMA = ta.EMA(dataframe, timeperiod=self.fast_ma_period)
+        slowEMA = ta.EMA(dataframe, timeperiod=self.slow_ma_period)
         dataframe['fastMA'] = fastEMA
         dataframe['slowMA'] = slowEMA
 

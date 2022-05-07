@@ -85,20 +85,6 @@ class ActionZone(IStrategy):
         },
     }
     
-
-    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime, current_rate: float, current_profit: float, **kwargs) -> float:
-        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
-        last_candle = dataframe.iloc[-1].squeeze()
-
-        stoploss_price = last_candle['lowest']
-
-        # set stoploss when is new order
-        if current_profit == 0 and current_time - timedelta(minutes=1) < trade.open_date_utc:
-        # Convert absolute price to percentage relative to current_rate
-            return (stoploss_price / current_rate) - 1
-
-        return 1 # return a value bigger than the initial stoploss to keep using the initial stoploss
-
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float, proposed_stake: float, min_stake: float, max_stake: float, **kwargs) -> float:
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()
@@ -108,19 +94,6 @@ class ActionZone(IStrategy):
         use_money = volume_for_buy * current_rate
 
         return use_money
-
-    def informative_pairs(self):
-        """
-        Define additional, informative pair/interval combinations to be cached from the exchange.
-        These pair/interval combinations are non-tradeable, unless they are part
-        of the whitelist as well.
-        For more information, please consult the documentation
-        :return: List of tuples in the format (pair, interval)
-            Sample: return [("ETH/USDT", "5m"),
-                            ("BTC/USDT", "15m"),
-                            ]
-        """
-        return []
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         """
